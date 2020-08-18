@@ -787,4 +787,10 @@ describe('lib/utils', function() {
       });
     });
   });
+
+  describe('uniqueID()', function() {
+    it('should return a non-empty string', function() {
+      expect(utils.uniqueID(), 'to be a string').and('not to be empty');
+    });
+  });
 });

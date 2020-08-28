@@ -135,7 +135,7 @@ describe('parallel-buffered-runner', function() {
           });
 
           it('should create object references', function() {
-            const options = {};
+            const options = {reporter: runner._workerReporter};
             const someSuite = {
               title: 'some suite',
               [MOCHA_ID_PROP_NAME]: 'bar'
@@ -189,7 +189,7 @@ describe('parallel-buffered-runner', function() {
 
         describe('when a worker fails', function() {
           it('should recover', function(done) {
-            const options = {};
+            const options = {reporter: runner._workerReporter};
             run.withArgs('some-file.js', options).rejects(new Error('whoops'));
             run.withArgs('some-other-file.js', options).resolves({
               failureCount: 0,
@@ -222,7 +222,7 @@ describe('parallel-buffered-runner', function() {
           });
 
           it('should delegate to Runner#uncaught', function(done) {
-            const options = {};
+            const options = {reporter: runner._workerReporter};
             sinon.spy(runner, 'uncaught');
             const err = new Error('whoops');
             run.withArgs('some-file.js', options).rejects(new Error('whoops'));
@@ -304,7 +304,7 @@ describe('parallel-buffered-runner', function() {
           describe('when an event contains an error and has positive failures', function() {
             describe('when subsequent files have not yet been run', function() {
               it('should cleanly terminate the thread pool', function(done) {
-                const options = {};
+                const options = {reporter: runner._workerReporter};
                 const err = {
                   __type: 'Error',
                   message: 'oh no'
@@ -354,7 +354,7 @@ describe('parallel-buffered-runner', function() {
             });
             describe('when subsequent files already started running', function() {
               it('should cleanly terminate the thread pool', function(done) {
-                const options = {};
+                const options = {reporter: runner._workerReporter};
                 const err = {
                   __type: 'Error',
                   message: 'oh no'
@@ -466,7 +466,7 @@ describe('parallel-buffered-runner', function() {
           describe('when an event contains an error and has positive failures', function() {
             describe('when subsequent files have not yet been run', function() {
               it('should cleanly terminate the thread pool', function(done) {
-                const options = {};
+                const options = {reporter: runner._workerReporter};
                 const err = {
                   __type: 'Error',
                   message: 'oh no'
@@ -510,7 +510,7 @@ describe('parallel-buffered-runner', function() {
 
             describe('when subsequent files already started running', function() {
               it('should cleanly terminate the thread pool', function(done) {
-                const options = {};
+                const options = {reporter: runner._workerReporter};
                 const err = {
                   __type: 'Error',
                   message: 'oh no'
@@ -570,7 +570,7 @@ describe('parallel-buffered-runner', function() {
 
             describe('when subsequent files have not yet been run', function() {
               it('should cleanly terminate the thread pool', function(done) {
-                const options = {};
+                const options = {reporter: runner._workerReporter};
                 const err = {
                   __type: 'Error',
                   message: 'oh no'
@@ -627,6 +627,30 @@ describe('parallel-buffered-runner', function() {
         });
 
         // avoid testing implementation details; don't check _linkPartialObjects
+      });
+
+      describe('isParallelMode()', function() {
+        let runner;
+
+        beforeEach(function() {
+          runner = new ParallelBufferedRunner(suite);
+        });
+
+        it('should return true', function() {
+          expect(runner.isParallelMode(), 'to be true');
+        });
+      });
+
+      describe('workerReporter()', function() {
+        let runner;
+
+        beforeEach(function() {
+          runner = new ParallelBufferedRunner(suite);
+        });
+
+        it('should return its context', function() {
+          expect(runner.workerReporter(), 'to be', runner);
+        });
       });
     });
   });
